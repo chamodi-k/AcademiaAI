@@ -60,7 +60,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
 
 export const requireAdmin = (req: Request, res: Response, next: NextFunction): void => {
   if (!req.user || req.user.role !== 'ADMIN') {
-    res.status(403).json({ success: false, message: 'Access forbidden. Administrator privileges required.' });
+    res.status(403).json({ success: false, message: 'You are not authorized to access the Admin Panel.' });
     return;
   }
   next();

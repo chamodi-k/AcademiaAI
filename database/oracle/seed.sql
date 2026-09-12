@@ -3,8 +3,6 @@
 -- Realistic Academic Records for Demo & Portfolio Showcase
 -- ============================================================================
 
--- Insert Admin & Student Users
--- Passwords are encrypted hash for 'password123' ($2a$10$wNqHskYmUf7zJqgA/vS5i.VfJ407B8m5W7a6u.vQO5tqKj8tP3G6u)
 INSERT INTO USERS (id, email, password_hash, role, status) VALUES 
 ('usr-admin-01', 'admin@academia.edu', '$2a$10$e84W/3O2fV7h.vO4m6W9..q1xG9p3eF4vC8d9g8b1a7w6q3z1y0l2', 'ADMIN', 'ACTIVE');
 

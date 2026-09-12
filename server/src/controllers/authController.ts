@@ -9,7 +9,7 @@ import { User, StudentProfile } from '../types/index.js';
 export class AuthController {
   static async register(req: Request, res: Response) {
     try {
-      const { email, password, fullName, degree, university, role } = req.body;
+      const { email, password, fullName, degree, university } = req.body;
 
       if (!email || !password || !fullName) {
         res.status(400).json({ success: false, message: 'Email, password, and full name are required.' });
@@ -30,7 +30,7 @@ export class AuthController {
         id: userId,
         email: email.trim().toLowerCase(),
         password_hash: passwordHash,
-        role: role === 'ADMIN' ? 'ADMIN' : 'STUDENT',
+        role: 'STUDENT',
         status: 'ACTIVE',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

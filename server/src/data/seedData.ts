@@ -14,8 +14,21 @@ import {
   Notification 
 } from '../types/index.js';
 
-// Pre-hashed for 'password123'
-export const DEFAULT_HASH = bcrypt.hashSync('password123', 10);
+const defaultStudentPasswordHash = bcrypt.hashSync('password123', 10);
+const configuredAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+const configuredAdminPassword = process.env.ADMIN_PASSWORD;
+
+const initialAdmin: User[] = configuredAdminEmail && configuredAdminPassword
+  ? [{
+      id: 'usr-admin-01',
+      email: configuredAdminEmail,
+      password_hash: bcrypt.hashSync(configuredAdminPassword, 12),
+      role: 'ADMIN',
+      status: 'ACTIVE',
+      created_at: new Date('2026-01-01').toISOString(),
+      updated_at: new Date('2026-01-01').toISOString()
+    }]
+  : [];
 
 const now = new Date();
 const addDays = (d: number, h: number = 0) => {
@@ -24,19 +37,11 @@ const addDays = (d: number, h: number = 0) => {
 };
 
 export const initialUsers: User[] = [
-  {
-    id: 'usr-admin-01',
-    email: 'admin@academia.edu',
-    password_hash: DEFAULT_HASH,
-    role: 'ADMIN',
-    status: 'ACTIVE',
-    created_at: new Date('2026-01-01').toISOString(),
-    updated_at: new Date('2026-01-01').toISOString()
-  },
+  ...initialAdmin,
   {
     id: 'usr-student-01',
     email: 'student@academia.edu',
-    password_hash: DEFAULT_HASH,
+    password_hash: defaultStudentPasswordHash,
     role: 'STUDENT',
     status: 'ACTIVE',
     created_at: new Date('2026-01-10').toISOString(),

@@ -71,7 +71,17 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAdmin, isLoading } = useAuth();
 
   if (isLoading) return null;
-  return isAdmin ? <>{children}</> : <Navigate to="/" replace />;
+  if (isAdmin) return <>{children}</>;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-6">
+      <div className="max-w-md text-center space-y-3">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Admin access denied</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">You are not authorized to access the Admin Panel.</p>
+        <a href="/" className="inline-block text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline">Return to dashboard</a>
+      </div>
+    </div>
+  );
 };
 
 // Dashboard Layout Wrapper

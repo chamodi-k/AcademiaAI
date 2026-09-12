@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, Sparkles, AlertCircle, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -22,23 +22,6 @@ export const LoginPage: React.FC = () => {
       navigate('/');
     } catch (err: any) {
       setError(err.message || 'Login failed. Check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickLogin = async (role: 'student' | 'admin') => {
-    setLoading(true);
-    setError(null);
-    try {
-      const demoEmail = role === 'admin' ? 'admin@academia.edu' : 'student@academia.edu';
-      const demoPass = 'password123';
-      setEmail(demoEmail);
-      setPassword(demoPass);
-      await login({ email: demoEmail, password: demoPass });
-      navigate('/');
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed.');
     } finally {
       setLoading(false);
     }
@@ -70,31 +53,6 @@ export const LoginPage: React.FC = () => {
               <span>{error}</span>
             </div>
           )}
-
-          {/* Quick Demo Accounts Buttons */}
-          <div className="p-3.5 rounded-2xl bg-brand-50/60 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900/40 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300 block">
-              ⚡ Quick Evaluator Demo Logins
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('student')}
-                disabled={loading}
-                className="py-1.5 px-3 rounded-xl bg-white dark:bg-slate-800 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-300 text-xs font-bold hover:bg-brand-50 flex items-center justify-center gap-1.5 shadow-2xs"
-              >
-                <User size={13} /> Demo Student
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin')}
-                disabled={loading}
-                className="py-1.5 px-3 rounded-xl bg-white dark:bg-slate-800 border border-brand-200 dark:border-brand-800 text-purple-700 dark:text-purple-300 text-xs font-bold hover:bg-purple-50 flex items-center justify-center gap-1.5 shadow-2xs"
-              >
-                <ShieldCheck size={13} /> Demo Admin
-              </button>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

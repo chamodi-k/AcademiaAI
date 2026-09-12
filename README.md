@@ -70,7 +70,7 @@ AcademiaAI is powered by **Google Firebase Cloud Firestore** (with support for b
 - **Security Rules**: Production rules with authentication and document-level authorization in [`database/firebase/firestore.rules`](file:///database/firebase/firestore.rules).
 - **Composite Indexes**: Optimized multi-field indexes defined in [`database/firebase/firestore.indexes.json`](file:///database/firebase/firestore.indexes.json).
 - **Schema & Data Dictionary**: Detailed documentation in [`database/firebase/FIRESTORE_SCHEMA.md`](file:///database/firebase/FIRESTORE_SCHEMA.md).
-- **Seed Data**: Pre-structured JSON records in [`database/firebase/seed_data.json`](file:///database/firebase/seed_data.json).��──┴───┐          ┌───┴────────────────┐
+- **Seed Data**: Pre-structured JSON records in [`database/firebase/seed_data.json`](file:///database/firebase/seed_data.json).��──┴───┐          ┌───┴────────────────┐
                 │                        │          │                    │
         ┌───────▼────────┐      ┌────────▼────────┐ │    ┌───────────────▼──┐
         │  Oracle 19c/23ai│      │ Local Fallback  │ │    │ Google Gemini AI │
@@ -169,14 +169,9 @@ Open your browser and navigate to **`http://localhost:5173`**.
 
 ---
 
-## 👤 Quick Demo Credentials
+## 👤 Authentication
 
-For rapid evaluator access, the login page features 1-click **"Demo Student"** and **"Demo Admin"** credentials:
-
-| Role | Email | Password | Access Privileges |
-|---|---|---|---|
-| **Student (Default)** | `student@academia.edu` | `password123` | Full Academic & AI Hub, Timetable, GPA, Exams |
-| **Administrator** | `admin@academia.edu` | `password123` | Full System Telemetry, User Management, AI Audits |
+Students create accounts through the registration page. Administrators sign in manually with credentials provisioned by the backend deployment environment; administrator credentials are never provided by the public client.
 
 ---
 
