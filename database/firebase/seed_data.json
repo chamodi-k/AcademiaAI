@@ -1,0 +1,86 @@
+{
+  "collections": {
+    "users": [
+      {
+        "id": "usr-admin-01",
+        "email": "admin@academia.edu",
+        "password_hash": "$2a$10$wNqHskYmUf7zJqgA/vS5i.VfJ407B8m5W7a6u.vQO5tqKj8tP3G6u",
+        "role": "ADMIN",
+        "status": "ACTIVE",
+        "created_at": "2026-01-01T00:00:00.000Z",
+        "updated_at": "2026-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "usr-student-01",
+        "email": "student@academia.edu",
+        "password_hash": "$2a$10$wNqHskYmUf7zJqgA/vS5i.VfJ407B8m5W7a6u.vQO5tqKj8tP3G6u",
+        "role": "STUDENT",
+        "status": "ACTIVE",
+        "created_at": "2026-01-10T00:00:00.000Z",
+        "updated_at": "2026-01-10T00:00:00.000Z"
+      }
+    ],
+    "students": [
+      {
+        "id": "std-01",
+        "user_id": "usr-student-01",
+        "full_name": "Kasun Perera",
+        "student_id_number": "IT21045982",
+        "university": "University of Moratuwa",
+        "faculty": "Faculty of Information Technology",
+        "degree": "BSc (Hons) in Information Technology & Software Engineering",
+        "academic_year": 3,
+        "current_semester": 1,
+        "target_gpa": 3.85,
+        "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+        "bio": "Dedicated 3rd-year CS student passionate about distributed systems, Cloud Firestore, and AI architecture."
+      }
+    ],
+    "subjects": [
+      {
+        "id": "sub-01",
+        "student_id": "std-01",
+        "code": "CS3010",
+        "name": "Database Management Systems",
+        "lecturer": "Dr. Athula Wickramasinghe",
+        "credits": 3,
+        "semester": 1,
+        "color_hex": "#4f46e5",
+        "is_weak_subject": 1
+      },
+      {
+        "id": "sub-02",
+        "student_id": "std-01",
+        "code": "CS3020",
+        "name": "Object-Oriented Programming (OOP)",
+        "lecturer": "Prof. Priyantha Silva",
+        "credits": 3,
+        "semester": 1,
+        "color_hex": "#06b6d4",
+        "is_weak_subject": 0
+      },
+      {
+        "id": "sub-03",
+        "student_id": "std-01",
+        "code": "CS3030",
+        "name": "Software Engineering (SE)",
+        "lecturer": "Dr. Nimalka Bandara",
+        "credits": 3,
+        "semester": 1,
+        "color_hex": "#10b981",
+        "is_weak_subject": 0
+      },
+      {
+        "id": "sub-04",
+        "student_id": "std-01",
+        "code": "CS3040",
+        "name": "Artificial Intelligence & Machine Learning",
+        "lecturer": "Dr. Ruwan Jayaweera",
+        "credits": 3,
+        "semester": 1,
+        "color_hex": "#f59e0b",
+        "is_weak_subject": 0
+      }
+    ]
+  }
+}
