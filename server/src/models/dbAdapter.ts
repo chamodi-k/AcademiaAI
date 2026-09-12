@@ -193,6 +193,7 @@ class DatabaseService {
 
   // --- Users & Profiles ---
   getUsers(): User[] { return this.state.users; }
+  getStudents(): StudentProfile[] { return this.state.students; }
   getUserById(id: string): User | undefined { return this.state.users.find(u => u.id === id); }
   getUserByEmail(email: string): User | undefined { return this.state.users.find(u => u.email.toLowerCase() === email.toLowerCase()); }
   createUser(user: User): User {
@@ -568,16 +569,56 @@ class DatabaseService {
   }
 
   // --- Notifications ---
+  getNotificationById(id: string): Notification | undefined {
+    return this.state.notifications.find(n => n.id === id);
+  }
   getNotifications(userId: string): Notification[] {
-    return this.state.notifications.filter(n => n.user_id === userId);
+    return this.state.notifications
+      .filter(n => n.user_id === userId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+  getNotificationsForAdmins(): Notification[] {
+    return this.state.notifications
+      .slice()
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 50);
+  }
+  createNotification(notification: Notification): Notification {
+    this.state.notifications.unshift(notification);
+    this.save();
+    this.syncDoc('notifications', notification.id, notification);
+    return notification;
+  }
+  createNotifications(notifications: Notification[]): Notification[] {
+    notifications.forEach(item => {
+      this.state.notifications.unshift(item);
+      this.syncDoc('notifications', item.id, item);
+    });
+    this.save();
+    return notifications;
   }
   markNotificationRead(id: string): boolean {
-    const n = this.state.notifications.find(x => x.id === id);
+    const n = this.getNotificationById(id);
     if (!n) return false;
     n.is_read = 1;
     this.save();
     this.syncDoc('notifications', id, n);
     return true;
+  }
+  markAllNotificationsRead(userId: string): number {
+    let count = 0;
+    this.state.notifications.forEach(n => {
+      if (n.user_id === userId && n.is_read === 0) {
+        n.is_read = 1;
+        count += 1;
+        this.syncDoc('notifications', n.id, n);
+      }
+    });
+    if (count > 0) this.save();
+    return count;
+  }
+  getUnreadNotificationCount(userId: string): number {
+    return this.getNotifications(userId).filter(n => n.is_read === 0).length;
   }
 
   // --- Telemetry & Admin ---
@@ -594,11 +635,32 @@ class DatabaseService {
   }
 
   getAdminStats() {
+    const activeStudents = this.state.users.filter(u => u.role === 'STUDENT' && u.status === 'ACTIVE').length;
+    const activeAssignments = this.state.assignments.filter(a => a.status !== 'Completed').length;
+    const upcomingExams = this.state.exams.filter(e => e.status === 'Upcoming' && new Date(e.exam_date).getTime() > Date.now()).length;
+    const warnings = this.state.attendance.filter(a => {
+      const pct = a.total_classes > 0 ? (a.attended_classes / a.total_classes) * 100 : 100;
+      return pct < a.minimum_required_pct;
+    }).length;
+    const averageAttendance = this.state.attendance.length > 0
+      ? Math.round(
+          this.state.attendance.reduce((sum, record) => {
+            const pct = record.total_classes > 0 ? (record.attended_classes / record.total_classes) * 100 : 100;
+            return sum + pct;
+          }, 0) / this.state.attendance.length
+        )
+      : 0;
+
     return {
       totalUsers: this.state.users.length,
       totalStudents: this.state.students.length,
+      activeStudents,
       totalSubjects: this.state.subjects.length,
       totalAssignments: this.state.assignments.length,
+      activeAssignments,
+      upcomingExams,
+      attendanceWarnings: warnings,
+      averageAttendance,
       totalExams: this.state.exams.length,
       totalQuizzesTaken: this.state.quizzes.filter(q => q.completed).length,
       totalAiGenerations: this.state.aiLogs.length + this.state.quizzes.length + this.state.studyPlans.length,

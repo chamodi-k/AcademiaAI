@@ -63,12 +63,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setToken(newToken);
     setUser(newUser);
-    setStudent(newStudent);
+    setStudent(newStudent ?? null);
     
     localStorage.setItem('academia_token', newToken);
     localStorage.setItem('academia_user', JSON.stringify(newUser));
     if (newStudent) {
       localStorage.setItem('academia_student', JSON.stringify(newStudent));
+    } else {
+      localStorage.removeItem('academia_student');
     }
   };
 

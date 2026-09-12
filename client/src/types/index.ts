@@ -192,6 +192,18 @@ export interface Note {
   updated_at: string;
 }
 
+export interface NotificationItem {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'INFO' | 'WARNING' | 'SUCCESS' | 'ANNOUNCEMENT';
+  is_read: number;
+  created_at: string;
+  related_id?: string;
+  link?: string;
+}
+
 export interface DashboardSummaryData {
   student: StudentProfile;
   todayDayName: string;

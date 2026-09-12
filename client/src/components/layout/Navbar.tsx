@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { api } from '../../services/api';
+import { NotificationItem } from '../../types';
 import { 
   Sun, 
   Moon, 
@@ -14,7 +15,11 @@ import {
   X, 
   Download, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  Bell,
+  Check,
+  Sparkles,
+  MessageSquareText
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -30,6 +35,47 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileSidebar, isMobileS
   const [isExportingCalendar, setIsExportingCalendar] = useState(false);
   const [exportMessage, setExportMessage] = useState<string | null>(null);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoadingNotifications(true);
+      const res = await api.notifications.getAll();
+      setNotifications(res.data || []);
+    } catch (err) {
+      console.error('Failed to load notifications', err);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const unreadCount = notifications.filter(n => n.is_read === 0).length;
+
+  const handleMarkRead = async (id: string) => {
+    try {
+      await api.notifications.markRead(id);
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: 1 } : n));
+    } catch (err) {
+      console.error('Failed to mark notification read', err);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await api.notifications.markAllRead();
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: 1 })));
+    } catch (err) {
+      console.error('Failed to mark all notifications read', err);
+    }
+  };
 
   const handleExportCalendar = async () => {
     try {
@@ -104,6 +150,75 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileSidebar, isMobileS
               {exportMessage}
             </span>
           )}
+
+          {/* Notification Bell */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(prev => !prev)}
+              className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-86 max-w-[90vw] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-30 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <Bell size={16} className="text-brand-600" />
+                    <span className="text-sm font-bold text-slate-800 dark:text-slate-100">Notifications</span>
+                  </div>
+                  <button
+                    onClick={handleMarkAllRead}
+                    className="text-[11px] font-semibold text-brand-600 dark:text-brand-400 hover:underline"
+                  >
+                    Mark all read
+                  </button>
+                </div>
+
+                <div className="max-h-96 overflow-y-auto">
+                  {loadingNotifications ? (
+                    <div className="p-4 text-xs text-slate-500">Loading notifications...</div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-xs text-slate-500">No notifications yet.</div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <button
+                        key={notification.id}
+                        onClick={() => {
+                          if (notification.link) {
+                            navigate(notification.link);
+                          }
+                          handleMarkRead(notification.id);
+                          setShowNotifications(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 ${notification.is_read === 0 ? 'bg-brand-50/40 dark:bg-brand-950/10' : ''}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`mt-0.5 p-1.5 rounded-lg ${notification.type === 'WARNING' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : notification.type === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : notification.type === 'ANNOUNCEMENT' ? 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300' : 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300'}`}>
+                            {notification.type === 'WARNING' ? <AlertCircle size={12} /> : notification.type === 'SUCCESS' ? <CheckCircle2 size={12} /> : notification.type === 'ANNOUNCEMENT' ? <MessageSquareText size={12} /> : <Sparkles size={12} />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{notification.title}</p>
+                              {notification.is_read === 0 && <span className="w-2 h-2 rounded-full bg-brand-500" />}
+                            </div>
+                            <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2">{notification.message}</p>
+                            <p className="text-[10px] text-slate-400 mt-1">{new Date(notification.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Theme Toggle Button */}
           <button

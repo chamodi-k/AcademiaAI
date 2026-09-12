@@ -41,6 +41,31 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
+const HomeRoute: React.FC = () => {
+  const { isAdmin, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-3 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-slate-500">Loading AcademiaAI...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return (
+    <AppLayout>
+      <DashboardPage />
+    </AppLayout>
+  );
+};
+
 // Admin Route Guard
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAdmin, isLoading } = useAuth();
@@ -92,9 +117,7 @@ export function App() {
               path="/"
               element={
                 <ProtectedRoute>
-                  <AppLayout>
-                    <DashboardPage />
-                  </AppLayout>
+                  <HomeRoute />
                 </ProtectedRoute>
               }
             />
@@ -199,9 +222,9 @@ export function App() {
               }
             />
 
-            {/* Admin Only Route */}
+            {/* Admin Only Routes */}
             <Route
-              path="/admin"
+              path="/admin/*"
               element={
                 <ProtectedRoute>
                   <AdminRoute>

@@ -16,6 +16,7 @@ import aiRoutes from './routes/aiRoutes.js';
 import calendarRoutes from './routes/calendarRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 const app = express();
 
@@ -67,6 +68,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 Handler

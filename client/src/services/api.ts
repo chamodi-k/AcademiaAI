@@ -156,10 +156,24 @@ export const api = {
     delete: (id: string) => request<any>(`/notes/${id}`, { method: 'DELETE' }),
   },
 
+  // Notifications
+  notifications: {
+    getAll: () => request<any>('/notifications'),
+    markRead: (id: string) => request<any>(`/notifications/${id}/read`, { method: 'PATCH' }),
+    markAllRead: () => request<any>('/notifications/mark-all-read', { method: 'PATCH' }),
+    announce: (data: any) => request<any>('/notifications/announce', { method: 'POST', body: JSON.stringify(data) }),
+  },
+
   // Admin
   admin: {
     getStats: () => request<any>('/admin/stats'),
     getUsers: () => request<any>('/admin/users'),
     updateUserStatus: (id: string, data: any) => request<any>(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    getData: (entity: string) => request<any>(`/admin/data/${entity}`),
+    createData: (entity: string, data: any) => request<any>(`/admin/data/${entity}`, { method: 'POST', body: JSON.stringify(data) }),
+    updateData: (entity: string, id: string, data: any) => request<any>(`/admin/data/${entity}/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteData: (entity: string, id: string) => request<any>(`/admin/data/${entity}/${id}`, { method: 'DELETE' }),
+    getNotifications: () => request<any>('/admin/notifications'),
+    createAnnouncement: (data: any) => request<any>('/admin/notifications', { method: 'POST', body: JSON.stringify(data) }),
   }
 };
